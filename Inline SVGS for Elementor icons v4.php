@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.1
+ * Version: 1.9.2
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -36,7 +36,7 @@ class Inline_SVG_Elementor {
         // Cache clearing actions
         $this->setup_cache_clearing();
 
-        // Add admin bar menu
+        // Add admin bar menu for cache clearing
         add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_clear_cache' ], 100 );
 
         // Handle manual cache clearing
@@ -120,18 +120,15 @@ class Inline_SVG_Elementor {
                     if ( file_exists( $svg_file_path ) ) {
 
                         // Generate a unique cache key based on settings that affect the SVG output
-                        $cache_key_data = [
-                            'attachment_id' => $attachment_id,
-                            'version'       => get_option( 'inline_svg_elementor_cache_version', '1' ),
-                            'settings_hash' => md5( wp_json_encode( $this->get_relevant_settings( $settings ) ) ),
-                        ];
-                        $cache_key     = 'inline_svg_' . md5( wp_json_encode( $cache_key_data ) );
+                        $settings_hash = md5( wp_json_encode( $this->get_relevant_settings( $settings ) ) );
+                        $cache_key     = 'inline_svg_' . md5( "{$attachment_id}_{$settings_hash}" );
                         $cache_group   = 'inline_svg_elementor';
                         $safe_svg      = wp_cache_get( $cache_key, $cache_group );
 
                         if ( false === $safe_svg ) {
                             $svg_content = file_get_contents( $svg_file_path );
 
+                            // Handle libxml_disable_entity_loader() only for PHP < 8.0
                             if ( PHP_VERSION_ID < 80000 ) {
                                 libxml_disable_entity_loader( true );
                             }
@@ -171,7 +168,7 @@ class Inline_SVG_Elementor {
                                     error_log( 'Error: Invalid JSON for ARIA attributes in widget settings.' );
                                 } else if ( is_array( $custom_aria ) ) {
                                     foreach ( $custom_aria as $attr => $value ) {
-                                        $attr  = sanitize_key( $attr );
+                                        $attr  = sanitize_text_field( $attr );
                                         $value = sanitize_text_field( $value );
                                         if ( preg_match( '/^aria-[a-z]+$/', $attr ) ) {
                                             $svg_element->setAttribute( $attr, $value );
@@ -182,7 +179,7 @@ class Inline_SVG_Elementor {
 
                             // Minify the final SVG content and cache it
                             $safe_svg = $dom->saveXML( $svg_element );
-                            $safe_svg = preg_replace( '/>\s+</', '><', $safe_svg );
+                            $safe_svg = preg_replace( '/>\s+</', '><', $safe_svg ); // Minify inline SVG
 
                             // Restore libxml settings
                             libxml_clear_errors();
@@ -232,6 +229,7 @@ class Inline_SVG_Elementor {
         return $relevant_settings;
     }
 
+    // Add content controls for SVG color in the Elementor Icon widget
     public function add_content_controls( $element, $args ) {
         $element->add_control(
             'primary_color',
@@ -246,7 +244,7 @@ class Inline_SVG_Elementor {
         );
     }
 
-    // Setup cache clearing actions
+    // Setup cache clearing actions for different plugins and WordPress actions
     private function setup_cache_clearing() {
         add_action( 'rocket_clear_cache', [ $this, 'clear_cache' ] );
         add_action( 'autoptimize_action_cachepurged', [ $this, 'clear_cache' ] );
@@ -264,12 +262,14 @@ class Inline_SVG_Elementor {
         add_action( 'delete_attachment', [ $this, 'clear_cache' ] );
     }
 
+    // Clear the SVG cache
     public function clear_cache() {
         $cache_version = get_option( 'inline_svg_elementor_cache_version', '1' );
         $cache_version++;
         update_option( 'inline_svg_elementor_cache_version', $cache_version );
     }
 
+    // Handle manual cache clearing via admin bar action
     public function manual_clear_cache() {
         if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'inline_svg_elementor_clear_cache' ) ) {
             wp_die( esc_html__( 'You are not allowed to clear the cache.', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) );
@@ -281,6 +281,7 @@ class Inline_SVG_Elementor {
         exit;
     }
 
+    // Add an option to the admin bar to manually clear the SVG cache
     public function add_admin_bar_clear_cache( $wp_admin_bar ) {
         if ( ! is_admin_bar_showing() || ! current_user_can( 'manage_options' ) ) {
             return;
