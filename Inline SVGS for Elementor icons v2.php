@@ -139,11 +139,16 @@ class Inline_SVG_Elementor {
 
                             $dom = new DOMDocument();
                             if ( $dom->loadXML( $svg_content, LIBXML_NONET ) === false ) {
+                                // Log error for debugging
+                                error_log( 'Error: Failed to load SVG content for attachment ID ' . $attachment_id );
+
                                 libxml_clear_errors();
                                 libxml_use_internal_errors( $internal_errors );
                                 if ( PHP_VERSION_ID < 80000 ) {
                                     libxml_disable_entity_loader( false );
                                 }
+
+                                // Return fallback rendering
                                 return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
                             }
 
@@ -162,9 +167,11 @@ class Inline_SVG_Elementor {
                             // Handle ARIA attributes if provided
                             if ( ! empty( $settings['custom_aria_attributes'] ) ) {
                                 $custom_aria = json_decode( $settings['custom_aria_attributes'], true );
-                                if ( json_last_error() === JSON_ERROR_NONE && is_array( $custom_aria ) ) {
+                                if ( json_last_error() !== JSON_ERROR_NONE ) {
+                                    error_log( 'Error: Invalid JSON for ARIA attributes in widget settings.' );
+                                } else if ( is_array( $custom_aria ) ) {
                                     foreach ( $custom_aria as $attr => $value ) {
-                                        $attr = sanitize_key( $attr );
+                                        $attr  = sanitize_key( $attr );
                                         $value = sanitize_text_field( $value );
                                         if ( preg_match( '/^aria-[a-z]+$/', $attr ) ) {
                                             $svg_element->setAttribute( $attr, $value );
@@ -193,7 +200,7 @@ class Inline_SVG_Elementor {
                             $safe_svg = str_replace( '<svg', '<svg loading="lazy"', $safe_svg );
                         }
 
-                        return $safe_svg;
+                        return wp_kses_post( $safe_svg ); // Escape the final SVG output for safety
 
                     } else {
                         return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
@@ -264,8 +271,8 @@ class Inline_SVG_Elementor {
     }
 
     public function manual_clear_cache() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
+        if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'inline_svg_elementor_clear_cache' ) ) {
+            wp_die( esc_html__( 'You are not allowed to clear the cache.', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) );
         }
 
         $this->clear_cache();
