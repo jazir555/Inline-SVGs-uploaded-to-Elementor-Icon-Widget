@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.2
+ * Version: 1.9.3
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -150,15 +150,13 @@ class Inline_SVG_Elementor {
                             }
 
                             // Sanitize the SVG content
-                            $sanitizer = new enshrined\svgSanitize\Sanitizer();
-                            $sanitizer->minify( true );
-                            $safe_svg_content = $sanitizer->sanitize( $dom->saveXML() );
+                            $safe_svg = $this->sanitize_svg( $dom->saveXML() );
 
-                            if ( ! $safe_svg_content ) {
+                            if ( ! $safe_svg ) {
                                 return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
                             }
 
-                            $dom->loadXML( $safe_svg_content );
+                            $dom->loadXML( $safe_svg );
                             $svg_element = $dom->documentElement;
 
                             // Handle ARIA attributes if provided
@@ -209,6 +207,17 @@ class Inline_SVG_Elementor {
         }
 
         return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
+    }
+
+    // SVG sanitization function
+    private function sanitize_svg( $svg_content ) {
+        // Use the enshrined SVG Sanitizer to sanitize SVG content
+        $sanitizer = new enshrined\svgSanitize\Sanitizer();
+        $sanitizer->minify( true );
+        $safe_svg = $sanitizer->sanitize( $svg_content );
+
+        // Return sanitized SVG content
+        return $safe_svg;
     }
 
     // Extract relevant settings that affect SVG rendering
