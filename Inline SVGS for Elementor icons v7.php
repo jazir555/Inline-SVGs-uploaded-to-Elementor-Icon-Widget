@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.6
+ * Version: 1.9.7
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -119,9 +119,8 @@ class Inline_SVG_Elementor {
                     $svg_file_path = get_attached_file( $attachment_id );
                     if ( file_exists( $svg_file_path ) ) {
 
-                        // Generate a unique cache key based on settings that affect the SVG output
-                        $settings_hash = md5( wp_json_encode( $this->get_relevant_settings( $settings ) ) );
-                        $cache_key     = 'inline_svg_' . md5( "{$attachment_id}_{$settings_hash}" );
+                        // Optimize cache key generation
+                        $cache_key = 'inline_svg_' . md5( $attachment_id . wp_json_encode( $this->get_relevant_settings( $settings ) ) );
                         $cache_group   = 'inline_svg_elementor';
                         $safe_svg      = wp_cache_get( $cache_key, $cache_group );
 
