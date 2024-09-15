@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.4
+ * Version: 1.9.6
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
