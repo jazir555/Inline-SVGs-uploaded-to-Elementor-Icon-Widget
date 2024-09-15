@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.3
+ * Version: 1.9.4
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -166,8 +166,8 @@ class Inline_SVG_Elementor {
                                     error_log( 'Error: Invalid JSON for ARIA attributes in widget settings.' );
                                 } else if ( is_array( $custom_aria ) ) {
                                     foreach ( $custom_aria as $attr => $value ) {
-                                        $attr  = sanitize_text_field( $attr );
-                                        $value = sanitize_text_field( $value );
+                                        $attr  = esc_attr( sanitize_text_field( $attr ) );
+                                        $value = esc_attr( sanitize_text_field( $value ) );
                                         if ( preg_match( '/^aria-[a-z]+$/', $attr ) ) {
                                             $svg_element->setAttribute( $attr, $value );
                                         }
@@ -216,8 +216,8 @@ class Inline_SVG_Elementor {
         $sanitizer->minify( true );
         $safe_svg = $sanitizer->sanitize( $svg_content );
 
-        // Return sanitized SVG content
-        return $safe_svg;
+        // Re-validate the sanitized SVG with wp_kses_post for additional security
+        return wp_kses_post( $safe_svg );
     }
 
     // Extract relevant settings that affect SVG rendering
