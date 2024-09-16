@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.8
+ * Version: 1.9.9
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -33,7 +33,7 @@ class Inline_SVG_Elementor {
         // Add content controls
         add_action( 'elementor/element/icon/section_icon/before_section_end', [ $this, 'add_content_controls' ], 10, 2 );
 
-        // Cache clearing actions
+        // Setup universal cache clearing actions
         $this->setup_cache_clearing();
 
         // Add admin bar menu for cache clearing
@@ -162,16 +162,19 @@ class Inline_SVG_Elementor {
                             if ( ! empty( $settings['custom_aria_attributes'] ) ) {
                                 $custom_aria = json_decode( $settings['custom_aria_attributes'], true );
                                 if ( json_last_error() !== JSON_ERROR_NONE ) {
-                                    $custom_aria = []; // Fallback to empty array on invalid JSON
                                     error_log( 'Error: Invalid JSON for ARIA attributes in widget settings.' );
-                                } 
-                                // Set ARIA attributes if valid JSON
+                                    $custom_aria = [];
+                                }
+
+                                // Allow only whitelisted ARIA attributes
                                 $allowed_aria_attributes = ['aria-label', 'aria-hidden', 'aria-labelledby'];
                                 foreach ( $custom_aria as $attr => $value ) {
                                     $attr  = esc_attr( sanitize_text_field( $attr ) );
                                     $value = esc_attr( sanitize_text_field( $value ) );
                                     if ( in_array( $attr, $allowed_aria_attributes, true ) ) {
                                         $svg_element->setAttribute( $attr, $value );
+                                    } else {
+                                        error_log("Unsupported ARIA attribute: {$attr}.");
                                     }
                                 }
                             }
@@ -254,29 +257,53 @@ class Inline_SVG_Elementor {
         );
     }
 
-    // Setup cache clearing actions for different plugins and WordPress actions
+    // Simplified universal cache clearing function
     private function setup_cache_clearing() {
-        add_action( 'rocket_clear_cache', [ $this, 'clear_cache' ] );
-        add_action( 'autoptimize_action_cachepurged', [ $this, 'clear_cache' ] );
-        add_action( 'w3tc_flush_all', [ $this, 'clear_cache' ] );
-        add_action( 'wp_fast_cache_purge_all', [ $this, 'clear_cache' ] );
-        add_action( 'ce_clear_all_cache', [ $this, 'clear_cache' ] );
-        add_action( 'litespeed_purge_all', [ $this, 'clear_cache' ] );
-        add_action( 'swcfpc_purge_cache', [ $this, 'clear_cache' ] );
+        $cache_clear_actions = [
+            'rocket_clear_cache', 'autoptimize_action_cachepurged', 'w3tc_flush_all', 'wp_fast_cache_purge_all',
+            'ce_clear_all_cache', 'litespeed_purge_all', 'swcfpc_purge_cache', 'switch_theme', 'customize_save_after',
+            'save_post', 'add_attachment', 'edit_attachment', 'delete_attachment'
+        ];
 
-        add_action( 'switch_theme', [ $this, 'clear_cache' ] );
-        add_action( 'customize_save_after', [ $this, 'clear_cache' ] );
-        add_action( 'save_post', [ $this, 'clear_cache' ] );
-        add_action( 'add_attachment', [ $this, 'clear_cache' ] );
-        add_action( 'edit_attachment', [ $this, 'clear_cache' ] );
-        add_action( 'delete_attachment', [ $this, 'clear_cache' ] );
+        foreach ($cache_clear_actions as $action) {
+            add_action($action, [$this, 'clear_cache']);
+        }
     }
 
-    // Clear the SVG cache
+    // Universal cache clearing function
     public function clear_cache() {
-        $cache_version = get_option( 'inline_svg_elementor_cache_version', '1' );
-        $cache_version++;
-        update_option( 'inline_svg_elementor_cache_version', $cache_version );
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+
+        // Clear page caching plugins, if they are active
+        if (function_exists('rocket_clean_domain')) {
+            rocket_clean_domain(); // WP Rocket
+        }
+
+        if (function_exists('autoptimize_cacheclear')) {
+            autoptimize_cacheclear(); // Autoptimize
+        }
+
+        if (function_exists('w3tc_flush_all')) {
+            w3tc_flush_all(); // W3 Total Cache
+        }
+
+        if (class_exists('LiteSpeed_Cache_API')) {
+            LiteSpeed_Cache_API::purge_all(); // LiteSpeed Cache
+        }
+
+        if (function_exists('wpfc_clear_all_cache')) {
+            wpfc_clear_all_cache(); // WP Fastest Cache
+        }
+
+        if (function_exists('ce_cache_flush')) {
+            ce_cache_flush(); // Cache Enabler
+        }
+
+        if (class_exists('SWCFPC_Object_Cache')) {
+            SWCFPC_Object_Cache::flush(); // Cloudflare Plugin
+        }
     }
 
     // Handle manual cache clearing via admin bar action
