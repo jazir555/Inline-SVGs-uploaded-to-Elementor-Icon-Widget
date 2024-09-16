@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.9
+ * Version: 2.0.0
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -257,7 +257,7 @@ class Inline_SVG_Elementor {
         );
     }
 
-    // Simplified universal cache clearing function
+    // Simplified universal cache clearing function using core WordPress methods
     private function setup_cache_clearing() {
         $cache_clear_actions = [
             'rocket_clear_cache', 'autoptimize_action_cachepurged', 'w3tc_flush_all', 'wp_fast_cache_purge_all',
@@ -276,33 +276,9 @@ class Inline_SVG_Elementor {
             wp_cache_flush();
         }
 
-        // Clear page caching plugins, if they are active
-        if (function_exists('rocket_clean_domain')) {
-            rocket_clean_domain(); // WP Rocket
-        }
-
-        if (function_exists('autoptimize_cacheclear')) {
-            autoptimize_cacheclear(); // Autoptimize
-        }
-
-        if (function_exists('w3tc_flush_all')) {
-            w3tc_flush_all(); // W3 Total Cache
-        }
-
-        if (class_exists('LiteSpeed_Cache_API')) {
-            LiteSpeed_Cache_API::purge_all(); // LiteSpeed Cache
-        }
-
-        if (function_exists('wpfc_clear_all_cache')) {
-            wpfc_clear_all_cache(); // WP Fastest Cache
-        }
-
-        if (function_exists('ce_cache_flush')) {
-            ce_cache_flush(); // Cache Enabler
-        }
-
-        if (class_exists('SWCFPC_Object_Cache')) {
-            SWCFPC_Object_Cache::flush(); // Cloudflare Plugin
+        // Trigger cache clearing for page caching plugins through core methods if supported
+        if (function_exists('wp_cache_clear_cache')) {
+            wp_cache_clear_cache();
         }
     }
 
