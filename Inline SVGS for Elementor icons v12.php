@@ -2,11 +2,12 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 2.0.3
+ * Version: 2.1.0
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
 
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -20,27 +21,23 @@ if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
 
 class Inline_SVG_Elementor {
 
+    /**
+     * Constructor for the plugin.
+     */
     public function __construct() {
-        // Add controls to the Icon widget
         add_action( 'elementor/element/icon/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
-
-        // Modify Icon widget rendering
         add_filter( 'elementor/icon/print_template', [ $this, 'inline_svg' ], 10, 3 );
         add_filter( 'elementor/frontend/icon', [ $this, 'inline_svg' ], 10, 3 );
-
-        // Add content controls
         add_action( 'elementor/element/icon/section_icon/before_section_end', [ $this, 'add_content_controls' ], 10, 2 );
 
-        // Setup cache clearing
         $this->setup_cache_clearing();
-
-        // Add admin bar menu for cache clearing
         add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_clear_cache' ], 100 );
-
-        // Handle manual cache clearing
         add_action( 'admin_post_inline_svg_elementor_clear_cache', [ $this, 'manual_clear_cache' ] );
     }
 
+    /**
+     * Add controls to the Icon widget's Advanced tab.
+     */
     public function add_controls( $element, $args ) {
         $element->start_controls_section(
             'section_inline_svg',
@@ -94,6 +91,9 @@ class Inline_SVG_Elementor {
         $element->end_controls_section();
     }
 
+    /**
+     * Inline SVG rendering.
+     */
     public function inline_svg( $icon, $args = [], $instance = null ) {
         if ( empty( $icon['value'] ) || ! $instance instanceof Elementor\Widget_Base ) {
             return '';
@@ -124,7 +124,7 @@ class Inline_SVG_Elementor {
                             $internal_errors = libxml_use_internal_errors( true );
                             $dom             = new DOMDocument();
 
-                            if ( $dom->loadXML( $svg_content, LIBXML_NONET ) === false ) {
+                            if ( ! $dom->loadXML( $svg_content, LIBXML_NONET ) ) {
                                 error_log( 'Error: Failed to load SVG content for attachment ID ' . $attachment_id );
                                 libxml_clear_errors();
                                 libxml_use_internal_errors( $internal_errors );
@@ -145,6 +145,7 @@ class Inline_SVG_Elementor {
                             $dom->loadXML( $safe_svg );
                             $svg_element = $dom->documentElement;
 
+                            // Handle ARIA attributes.
                             if ( ! empty( $settings['custom_aria_attributes'] ) ) {
                                 $custom_aria = json_decode( $settings['custom_aria_attributes'], true );
 
@@ -153,7 +154,7 @@ class Inline_SVG_Elementor {
                                     $custom_aria = [];
                                 }
 
-                                $allowed_aria_attributes = [ /* Expanded whitelist */];
+                                $allowed_aria_attributes = [ 'aria-label', 'aria-hidden', 'aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-expanded', 'aria-pressed' ];
 
                                 foreach ( $custom_aria as $attr => $value ) {
                                     $attr  = sanitize_key( $attr );
