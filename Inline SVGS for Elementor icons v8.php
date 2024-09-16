@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 1.9.7
+ * Version: 1.9.8
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
@@ -162,14 +162,16 @@ class Inline_SVG_Elementor {
                             if ( ! empty( $settings['custom_aria_attributes'] ) ) {
                                 $custom_aria = json_decode( $settings['custom_aria_attributes'], true );
                                 if ( json_last_error() !== JSON_ERROR_NONE ) {
+                                    $custom_aria = []; // Fallback to empty array on invalid JSON
                                     error_log( 'Error: Invalid JSON for ARIA attributes in widget settings.' );
-                                } else if ( is_array( $custom_aria ) ) {
-                                    foreach ( $custom_aria as $attr => $value ) {
-                                        $attr  = esc_attr( sanitize_text_field( $attr ) );
-                                        $value = esc_attr( sanitize_text_field( $value ) );
-                                        if ( preg_match( '/^aria-[a-z]+$/', $attr ) ) {
-                                            $svg_element->setAttribute( $attr, $value );
-                                        }
+                                } 
+                                // Set ARIA attributes if valid JSON
+                                $allowed_aria_attributes = ['aria-label', 'aria-hidden', 'aria-labelledby'];
+                                foreach ( $custom_aria as $attr => $value ) {
+                                    $attr  = esc_attr( sanitize_text_field( $attr ) );
+                                    $value = esc_attr( sanitize_text_field( $value ) );
+                                    if ( in_array( $attr, $allowed_aria_attributes, true ) ) {
+                                        $svg_element->setAttribute( $attr, $value );
                                     }
                                 }
                             }
