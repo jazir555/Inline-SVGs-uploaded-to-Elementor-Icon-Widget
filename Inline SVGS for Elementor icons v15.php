@@ -2,10 +2,12 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 2.5.1
+ * Version: 2.6.0
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
+
+namespace InlineSVGElementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -17,9 +19,6 @@ define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
 if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 }
-
-// Use namespace to avoid conflicts.
-namespace InlineSVGElementor;
 
 class Inline_SVG_Elementor {
 
@@ -48,6 +47,16 @@ class Inline_SVG_Elementor {
 
         // Update cache version when plugin settings are updated.
         add_action( 'update_option_inline_svg_elementor_settings', [ $this, 'update_cache_version' ] );
+
+        // Enqueue the script for lazy loading using Intersection Observer.
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_lazy_load_script' ] );
+    }
+
+    /**
+     * Enqueue JavaScript for lazy loading SVGs using Intersection Observer.
+     */
+    public function enqueue_lazy_load_script() {
+        wp_enqueue_script( 'svg-lazy-load', plugin_dir_url( __FILE__ ) . 'js/svg-lazy-load.js', [], '1.0', true );
     }
 
     /**
@@ -213,9 +222,9 @@ class Inline_SVG_Elementor {
                             wp_cache_set( $cache_key, $safe_svg, $cache_group );
                         }
 
-                        // Handle lazy-loading.
+                        // Handle lazy-loading with placeholder and Intersection Observer.
                         if ( isset( $settings['svg_lazy_load'] ) && 'yes' === $settings['svg_lazy_load'] ) {
-                            $safe_svg = str_replace( '<svg', '<svg loading="lazy"', $safe_svg );
+                            $safe_svg = '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" class="svg-placeholder" alt="">' . str_replace( '<svg', '<svg class="lazy-svg" data-lazy="true"', $safe_svg );
                         }
 
                         return wp_kses_post( $safe_svg );
@@ -228,7 +237,7 @@ class Inline_SVG_Elementor {
         return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
     }
 
-    // Additional methods like update_cache_version(), setup_cache_clearing(), manual_clear_cache(), etc., follow here with the requested enhancements.
+    // Additional methods for settings, cache management, and logging follow here.
 }
 
 new \InlineSVGElementor\Inline_SVG_Elementor();
