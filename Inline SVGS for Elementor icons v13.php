@@ -285,4 +285,3 @@ class Inline_SVG_Elementor {
 }
 
 new Inline_SVG_Elementor();
-
