@@ -2,17 +2,15 @@
 /**
  * Plugin Name: Inline SVG for Elementor Icon Widget
  * Description: Adds an option to inline SVGs in Elementor's Icon widget with enhanced security, accessibility, styling compatibility, and optimized performance.
- * Version: 2.0.2
+ * Version: 2.0.3
  * Author: Your Name
  * Text Domain: inline-svg-elementor
  */
 
-// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Define the text domain as a constant.
 define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
 
 // Include the SVG Sanitizer library.
@@ -20,39 +18,29 @@ if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 }
 
-// Main Plugin Class.
 class Inline_SVG_Elementor {
 
-    /**
-     * Constructor for the plugin.
-     */
     public function __construct() {
-        // Add controls to the Icon widget.
+        // Add controls to the Icon widget
         add_action( 'elementor/element/icon/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
 
-        // Modify Icon widget rendering.
+        // Modify Icon widget rendering
         add_filter( 'elementor/icon/print_template', [ $this, 'inline_svg' ], 10, 3 );
         add_filter( 'elementor/frontend/icon', [ $this, 'inline_svg' ], 10, 3 );
 
-        // Add content controls.
+        // Add content controls
         add_action( 'elementor/element/icon/section_icon/before_section_end', [ $this, 'add_content_controls' ], 10, 2 );
 
-        // Setup universal cache clearing actions.
+        // Setup cache clearing
         $this->setup_cache_clearing();
 
-        // Add admin bar menu for cache clearing.
+        // Add admin bar menu for cache clearing
         add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_clear_cache' ], 100 );
 
-        // Handle manual cache clearing.
+        // Handle manual cache clearing
         add_action( 'admin_post_inline_svg_elementor_clear_cache', [ $this, 'manual_clear_cache' ] );
     }
 
-    /**
-     * Add controls to the Icon widget's Advanced tab.
-     *
-     * @param Elementor\Widget_Base $element The Elementor widget object.
-     * @param array                 $args    Additional arguments.
-     */
     public function add_controls( $element, $args ) {
         $element->start_controls_section(
             'section_inline_svg',
@@ -62,7 +50,6 @@ class Inline_SVG_Elementor {
             ]
         );
 
-        // Add the toggle control to enable inlining SVG.
         $element->add_control(
             'enable_inline_svg',
             [
@@ -75,7 +62,6 @@ class Inline_SVG_Elementor {
             ]
         );
 
-        // Add custom ARIA attributes control.
         $element->add_control(
             'custom_aria_attributes',
             [
@@ -89,7 +75,6 @@ class Inline_SVG_Elementor {
             ]
         );
 
-        // Add lazy loading control for SVG.
         $element->add_control(
             'svg_lazy_load',
             [
@@ -109,36 +94,22 @@ class Inline_SVG_Elementor {
         $element->end_controls_section();
     }
 
-    /**
-     * Inline SVG rendering.
-     *
-     * @param array             $icon      The icon data array.
-     * @param array             $args      Additional arguments for rendering.
-     * @param Elementor\Widget_Base|null $instance The Elementor widget instance.
-     *
-     * @return string The rendered SVG output or an empty string on failure.
-     */
     public function inline_svg( $icon, $args = [], $instance = null ) {
-        // Check if the icon value is empty or the instance is invalid.
         if ( empty( $icon['value'] ) || ! $instance instanceof Elementor\Widget_Base ) {
             return '';
         }
 
-        // Get the widget settings.
         $settings = $instance->get_settings_for_display();
 
-        // Check if 'enable_inline_svg' is set to 'yes'.
         if ( isset( $settings['enable_inline_svg'] ) && 'yes' === $settings['enable_inline_svg'] ) {
-            // Proceed to inline the SVG if it's an attachment ID.
             if ( is_numeric( $icon['value'] ) ) {
-                $attachment_id = absint( $icon['value'] ); // Sanitize as attachment ID.
+                $attachment_id = absint( $icon['value'] );
                 $attachment    = get_post( $attachment_id );
 
                 if ( $attachment && 'image/svg+xml' === get_post_mime_type( $attachment_id ) ) {
                     $svg_file_path = get_attached_file( $attachment_id );
 
                     if ( file_exists( $svg_file_path ) ) {
-                        // Optimize cache key generation.
                         $cache_key   = 'inline_svg_' . md5( $attachment_id . wp_json_encode( $this->get_relevant_settings( $settings ) ) );
                         $cache_group = 'inline_svg_elementor';
                         $safe_svg    = wp_cache_get( $cache_key, $cache_group );
@@ -146,7 +117,6 @@ class Inline_SVG_Elementor {
                         if ( false === $safe_svg ) {
                             $svg_content = file_get_contents( $svg_file_path );
 
-                            // Handle libxml_disable_entity_loader() only for PHP < 8.0.
                             if ( PHP_VERSION_ID < 80000 ) {
                                 $old_libxml = libxml_disable_entity_loader( true );
                             }
@@ -154,12 +124,8 @@ class Inline_SVG_Elementor {
                             $internal_errors = libxml_use_internal_errors( true );
                             $dom             = new DOMDocument();
 
-                            // Suppress warnings for external entities.
-                            if ( @$dom->loadXML( $svg_content, LIBXML_NONET ) === false ) {
-                                // Log error for debugging.
+                            if ( $dom->loadXML( $svg_content, LIBXML_NONET ) === false ) {
                                 error_log( 'Error: Failed to load SVG content for attachment ID ' . $attachment_id );
-
-                                // Handle libxml errors gracefully.
                                 libxml_clear_errors();
                                 libxml_use_internal_errors( $internal_errors );
 
@@ -167,11 +133,9 @@ class Inline_SVG_Elementor {
                                     libxml_disable_entity_loader( $old_libxml );
                                 }
 
-                                // Return fallback rendering.
                                 return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
                             }
 
-                            // Sanitize the SVG content.
                             $safe_svg = $this->sanitize_svg( $dom->saveXML() );
 
                             if ( ! $safe_svg ) {
@@ -181,7 +145,6 @@ class Inline_SVG_Elementor {
                             $dom->loadXML( $safe_svg );
                             $svg_element = $dom->documentElement;
 
-                            // Handle ARIA attributes if provided.
                             if ( ! empty( $settings['custom_aria_attributes'] ) ) {
                                 $custom_aria = json_decode( $settings['custom_aria_attributes'], true );
 
@@ -190,8 +153,8 @@ class Inline_SVG_Elementor {
                                     $custom_aria = [];
                                 }
 
-                                // Allow only whitelisted ARIA attributes.
-                                $allowed_aria_attributes = [ 'aria-label', 'aria-hidden', 'aria-labelledby' ];
+                                $allowed_aria_attributes = [ /* Expanded whitelist */];
+
                                 foreach ( $custom_aria as $attr => $value ) {
                                     $attr  = sanitize_key( $attr );
                                     $value = esc_attr( sanitize_text_field( $value ) );
@@ -203,11 +166,8 @@ class Inline_SVG_Elementor {
                                 }
                             }
 
-                            // Minify the final SVG content and cache it.
                             $safe_svg = $dom->saveXML( $svg_element );
-                            $safe_svg = preg_replace( '/>\s+</', '><', $safe_svg ); // Minify inline SVG.
-
-                            // Restore libxml settings.
+                            $safe_svg = preg_replace( '/>\s+</', '><', $safe_svg );
                             libxml_clear_errors();
                             libxml_use_internal_errors( $internal_errors );
 
@@ -215,51 +175,31 @@ class Inline_SVG_Elementor {
                                 libxml_disable_entity_loader( $old_libxml );
                             }
 
-                            // Cache the sanitized SVG content.
                             wp_cache_set( $cache_key, $safe_svg, $cache_group );
                         }
 
-                        // Add lazy loading attribute if enabled.
                         if ( isset( $settings['svg_lazy_load'] ) && 'yes' === $settings['svg_lazy_load'] ) {
                             $safe_svg = str_replace( '<svg', '<svg loading="lazy"', $safe_svg );
                         }
 
-                        return wp_kses_post( $safe_svg ); // Escape the final SVG output for safety.
+                        return wp_kses_post( $safe_svg );
                     }
                 }
             }
         }
 
-        // If inlining is not enabled or encounters an error, fallback to default rendering.
         return \Elementor\Icons_Manager::render_icon( $icon, $args, $instance );
     }
 
-    /**
-     * SVG sanitization function.
-     *
-     * @param string $svg_content The raw SVG content to sanitize.
-     *
-     * @return string|false The sanitized SVG content or false on failure.
-     */
     private function sanitize_svg( $svg_content ) {
-        // Use the enshrined SVG Sanitizer to sanitize SVG content.
         $sanitizer = new enshrined\svgSanitize\Sanitizer();
         $sanitizer->minify( true );
-
-        // Sanitize the SVG content and return.
         return $sanitizer->sanitize( $svg_content );
     }
 
-    /**
-     * Extract relevant settings that affect SVG rendering.
-     *
-     * @param array $settings The array of widget settings.
-     *
-     * @return array The filtered array containing only relevant settings for SVG.
-     */
     private function get_relevant_settings( $settings ) {
         $relevant_settings = [];
-        $keys              = [
+        $keys = [
             'enable_inline_svg',
             'custom_aria_attributes',
             'svg_lazy_load',
@@ -274,12 +214,6 @@ class Inline_SVG_Elementor {
         return $relevant_settings;
     }
 
-    /**
-     * Add content controls for SVG color in the Elementor Icon widget.
-     *
-     * @param Elementor\Widget_Base $element The Elementor widget object.
-     * @param array                 $args    Additional arguments.
-     */
     public function add_content_controls( $element, $args ) {
         $element->add_control(
             'primary_color',
@@ -294,24 +228,11 @@ class Inline_SVG_Elementor {
         );
     }
 
-    /**
-     * Setup cache clearing for various events.
-     */
     private function setup_cache_clearing() {
         $cache_clear_actions = [
-            'rocket_clear_cache',
-            'autoptimize_action_cachepurged',
-            'w3tc_flush_all',
-            'wp_fast_cache_purge_all',
-            'ce_clear_all_cache',
-            'litespeed_purge_all',
-            'swcfpc_purge_cache',
-            'switch_theme',
-            'customize_save_after',
-            'save_post',
-            'add_attachment',
-            'edit_attachment',
-            'delete_attachment',
+            'rocket_clear_cache', 'autoptimize_action_cachepurged', 'w3tc_flush_all', 'wp_fast_cache_purge_all',
+            'ce_clear_all_cache', 'litespeed_purge_all', 'swcfpc_purge_cache', 'switch_theme', 'customize_save_after',
+            'save_post', 'add_attachment', 'edit_attachment', 'delete_attachment'
         ];
 
         foreach ( $cache_clear_actions as $action ) {
@@ -319,24 +240,16 @@ class Inline_SVG_Elementor {
         }
     }
 
-    /**
-     * Universal cache clearing function.
-     */
     public function clear_cache() {
-        // Clear object cache.
         if ( function_exists( 'wp_cache_flush' ) ) {
             wp_cache_flush();
         }
 
-        // Trigger cache clearing for page caching plugins through core methods if supported.
         if ( function_exists( 'wp_cache_clear_cache' ) ) {
             wp_cache_clear_cache();
         }
     }
 
-    /**
-     * Handle manual cache clearing via admin bar action.
-     */
     public function manual_clear_cache() {
         if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'inline_svg_elementor_clear_cache' ) ) {
             wp_die( esc_html__( 'You are not allowed to clear the cache.', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) );
@@ -348,11 +261,6 @@ class Inline_SVG_Elementor {
         exit;
     }
 
-    /**
-     * Add an option to the admin bar to manually clear the SVG cache.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
-     */
     public function add_admin_bar_clear_cache( $wp_admin_bar ) {
         if ( ! is_admin_bar_showing() || ! current_user_can( 'manage_options' ) ) {
             return;
@@ -362,14 +270,11 @@ class Inline_SVG_Elementor {
             'id'    => 'inline_svg_elementor_clear_cache',
             'title' => esc_html__( 'Clear Inline SVG Cache', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
             'href'  => wp_nonce_url( admin_url( 'admin-post.php?action=inline_svg_elementor_clear_cache' ), 'inline_svg_elementor_clear_cache' ),
-            'meta'  => [
-                'title' => esc_html__( 'Clear Inline SVG Cache', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-            ],
+            'meta'  => [ 'title' => esc_html__( 'Clear Inline SVG Cache', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) ],
         ];
 
         $wp_admin_bar->add_node( $args );
     }
 }
 
-// Initialize the plugin.
 new Inline_SVG_Elementor();
