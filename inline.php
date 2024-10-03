@@ -59,7 +59,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Ensure all actions and filters are properly structured
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
@@ -76,7 +89,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Ensure all actions and filters are properly structured
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
@@ -107,7 +133,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Ensure all actions and filters are properly structured
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
@@ -124,7 +163,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Ensure all actions and filters are properly structured
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
@@ -155,7 +207,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Ensure all actions and filters are properly structured
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
@@ -172,7 +237,20 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Modify Icon Box, Social Icons, Icon List, and Share Buttons widget rendering
+        
+        // Ensure all actions and filters are properly structured
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
 
         add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
