@@ -40,7 +40,16 @@ class Inline_SVG_Elementor {
         add_action( 'elementor/element/icon-box/section_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Add controls to the Social Icons widget (style section for individual social icons)
+        add_action( 'elementor/element/social-icons/section_icon_s
+        // Add controls to the Social Icons widget (style section for individual social icons)
         add_action( 'elementor/element/social-icons/section_icon_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Icon List widget (style section for icon list items)
+        add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Share Buttons widget (style section for the button icons)
+        add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
 
         // Add controls to the Icon List widget (style section for icon list items)
         add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
@@ -63,7 +72,16 @@ class Inline_SVG_Elementor {
 
         
         // Add controls to the Social Icons widget (style section for individual social icons)
+        add_action( 'elementor/element/social-icons/section_icon_s
+        // Add controls to the Social Icons widget (style section for individual social icons)
         add_action( 'elementor/element/social-icons/section_icon_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Icon List widget (style section for icon list items)
+        add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Share Buttons widget (style section for the button icons)
+        add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
         
         // Add controls to the Icon List widget (style section for icon list items)
         add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
