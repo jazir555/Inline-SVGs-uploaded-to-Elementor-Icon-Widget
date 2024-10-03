@@ -19,10 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define the text domain as a constant
 
 // Always define the text domain constant
+
+// Always define the text domain constant
 define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
-
-
-
 // Include the SVG Sanitizer library
 if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
