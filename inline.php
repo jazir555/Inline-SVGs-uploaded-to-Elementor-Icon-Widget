@@ -11,17 +11,19 @@ use Elementor\Controls_Manager;
 use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
+    
+if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-// Define the text domain as a constant
-
-// Define the text domain as a constant
-
-// Always define the text domain constant
-
-// Always define the text domain constant
+// Define the text domain constant
 define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
+
+// Include the SVG Sanitizer library
+if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
+    require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+}
+
 // Include the SVG Sanitizer library
 if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
