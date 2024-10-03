@@ -15,7 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define the text domain as a constant
-const INLINE_SVG_ELEMENTOR_TEXT_DOMAIN = 'inline-svg-elementor';
+
+// Define the text domain as a constant
+if ( ! defined( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN' ) ) {
+    define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
+}
+
 
 // Include the SVG Sanitizer library
 if ( ! class_exists( 'enshrined\svgSanitize\Sanitizer' ) ) {
