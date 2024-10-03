@@ -28,17 +28,17 @@ class Inline_SVG_Elementor {
     public function __construct() {
         // Add controls to the Icon widget
 
-        // Add controls to the Icon Box widget (style section under icon control)
+        // Add controls to the Icon Box widget (style section for the icon box icon)
         add_action( 'elementor/element/icon-box/section_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
         
-        // Add controls to the Social Icons widget (style section under icon control)
-        add_action( 'elementor/element/social-icons/section_social_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+        // Add controls to the Social Icons widget (style section for individual social icons)
+        add_action( 'elementor/element/social-icons/section_icon_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
         
-        // Add controls to the Icon List widget (style section under icon list items control)
-        add_action( 'elementor/element/icon-list/section_icon_list_items/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+        // Add controls to the Icon List widget (style section for icon list items)
+        add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
         
-        // Add controls to the Share Buttons widget (style section under icon control)
-        add_action( 'elementor/element/share-buttons/section_share_buttons_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+        // Add controls to the Share Buttons widget (style section for the button icons)
+        add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Modify Icon Box, Social Icons, Icon List, and Share Buttons widget rendering
         add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
