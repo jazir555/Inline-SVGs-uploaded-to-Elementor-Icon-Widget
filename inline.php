@@ -27,6 +27,25 @@ class Inline_SVG_Elementor {
 
     public function __construct() {
         // Add controls to the Icon widget
+
+        // Add controls to the Icon Box, Social Icons, Icon List, and Share Buttons widgets
+        add_action( 'elementor/element/icon-box/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
+        add_action( 'elementor/element/social-icons/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
+        add_action( 'elementor/element/icon-list/section_icon_list_items/after_section_end', [ $this, 'add_controls' ], 10, 2 );
+        add_action( 'elementor/element/share-buttons/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Modify Icon Box, Social Icons, Icon List, and Share Buttons widget rendering
+        add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
         add_action( 'elementor/element/icon/section_style_icon/after_section_end', [ $this, 'add_controls' ], 10, 2 );
 
         // Modify Icon widget rendering
@@ -315,4 +334,3 @@ class Inline_SVG_Elementor {
 
 // Initialize the plugin
 new Inline_SVG_Elementor();
-
