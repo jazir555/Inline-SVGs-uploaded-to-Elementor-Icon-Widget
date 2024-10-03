@@ -72,35 +72,42 @@ class Inline_SVG_Elementor {
     }
 
     // Add controls to the Icon widget's Advanced tab
-    public function add_controls($element) {
-        $element->start_controls_section(
-            'section_inline_svg',
-            [
-                'label' => esc_html__( 'Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'tab'   => Controls_Manager::TAB_ADVANCED,
-            ]
-        );
+    
+public function add_controls($element) {
+    $element->start_controls_section(
+        'section_inline_svg',
+        [
+            'label' => esc_html__( 'Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'tab'   => Controls_Manager::TAB_ADVANCED,
+        ]
+    );
 
-        // Add the toggle control to enable inlining SVG
-        $element->add_control(
-            'enable_inline_svg',
-            [
-                'label'        => esc_html__( 'Enable Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'type'         => Controls_Manager::SWITCHER,
-                'label_on'     => esc_html__( 'Yes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'label_off'    => esc_html__( 'No', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'return_value' => 'yes',
-                'default'      => 'no',
-            ]
-        );
+    // Add the toggle control to enable inlining SVG
+    $element->add_control(
+        'enable_inline_svg',
+        [
+            'label'        => esc_html__( 'Enable Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'type'         => Controls_Manager::SWITCHER,
+            'label_on'     => esc_html__( 'Yes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'label_off'    => esc_html__( 'No', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'return_value' => 'yes',
+            'default'      => 'no',
+        ]
+    );
 
-        // Add custom ARIA attributes control
-        $element->add_control(
-            'custom_aria_attributes',
-            [
-                'label'       => esc_html__( 'Custom ARIA Attributes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'type'        => Controls_Manager::TEXTAREA,
-                'description' => esc_html__( 'Add custom ARIA attributes in JSON format, e.g., {"aria-label": "My SVG"}', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+    // Add custom ARIA attributes control
+    $element->add_control(
+        'custom_aria_attributes',
+        [
+            'label'       => esc_html__( 'Custom ARIA Attributes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'type'        => Controls_Manager::TEXTAREA,
+            'description' => esc_html__( 'Add custom ARIA attributes in JSON format, e.g., {"aria-label": "My SVG"}' ),
+        ]
+    );
+
+    $element->end_controls_section();  // Properly closing the controls section
+}
+', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
                 'default'     => '',
                 'condition'   => [
                     'enable_inline_svg' => 'yes',
