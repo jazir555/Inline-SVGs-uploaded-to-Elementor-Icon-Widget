@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define the text domain as a constant
 
 // Always define the text domain constant
-define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
+define( ''inline-svg-elementor'', 'inline-svg-elementor' );
 
 
 
@@ -35,7 +35,32 @@ class Inline_SVG_Elementor {
         // Add controls to the Icon widget
 
         // Add controls to the Icon Box widget (style section for the icon box icon)
+        
+        // Add controls to the Icon Box widget (style section for the icon box icon)
         add_action( 'elementor/element/icon-box/section_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Social Icons widget (style section for individual social icons)
+        add_action( 'elementor/element/social-icons/section_icon_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Icon List widget (style section for icon list items)
+        add_action( 'elementor/element/icon-list/section_style_icon/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Add controls to the Share Buttons widget (style section for the button icons)
+        add_action( 'elementor/element/share-buttons/section_share_buttons_icons/before_section_end', [ $this, 'add_controls' ], 10, 2 );
+
+        // Ensure all actions and filters are properly structured
+        add_filter( 'elementor/icon-box/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-box', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/social-icons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/social-icons', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/icon-list/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/icon-list', [ $this, 'inline_svg' ], 10, 3 );
+
+        add_filter( 'elementor/share-buttons/print_template', [ $this, 'inline_svg' ], 10, 3 );
+        add_filter( 'elementor/frontend/share-buttons', [ $this, 'inline_svg' ], 10, 3 );
+
         
         // Add controls to the Social Icons widget (style section for individual social icons)
         add_action( 'elementor/element/social-icons/section_icon_style/before_section_end', [ $this, 'add_controls' ], 10, 2 );
