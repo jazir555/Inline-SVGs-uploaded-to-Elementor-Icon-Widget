@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define the text domain as a constant
 
 // Always define the text domain constant
-define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
+define( ''inline-svg-elementor'', 'inline-svg-elementor' );
 
 
 
@@ -83,7 +83,7 @@ public function add_controls($element) {
     $element->start_controls_section(
         'section_inline_svg',
         [
-            'label' => esc_html__( 'Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'label' => esc_html__( 'Inline SVG', 'inline-svg-elementor' ),
             'tab'   => Controls_Manager::TAB_ADVANCED,
         ]
     );
@@ -92,10 +92,10 @@ public function add_controls($element) {
     $element->add_control(
         'enable_inline_svg',
         [
-            'label'        => esc_html__( 'Enable Inline SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'label'        => esc_html__( 'Enable Inline SVG', 'inline-svg-elementor' ),
             'type'         => Controls_Manager::SWITCHER,
-            'label_on'     => esc_html__( 'Yes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-            'label_off'    => esc_html__( 'No', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'label_on'     => esc_html__( 'Yes', 'inline-svg-elementor' ),
+            'label_off'    => esc_html__( 'No', 'inline-svg-elementor' ),
             'return_value' => 'yes',
             'default'      => 'no',
         ]
@@ -105,7 +105,7 @@ public function add_controls($element) {
     $element->add_control(
         'custom_aria_attributes',
         [
-            'label'       => esc_html__( 'Custom ARIA Attributes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'label'       => esc_html__( 'Custom ARIA Attributes', 'inline-svg-elementor' ),
             'type'        => Controls_Manager::TEXTAREA,
             'description' => esc_html__( 'Add custom ARIA attributes in JSON format, e.g., {"aria-label": "My SVG"}' ),
         ]
@@ -113,7 +113,7 @@ public function add_controls($element) {
 
     $element->end_controls_section();  // Properly closing the controls section
 }
-', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+', 'inline-svg-elementor' ),
                 'default'     => '',
                 'condition'   => [
                     'enable_inline_svg' => 'yes',
@@ -125,13 +125,13 @@ public function add_controls($element) {
         $element->add_control(
             'svg_lazy_load',
             [
-                'label'        => esc_html__( 'Lazy Load SVG', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+                'label'        => esc_html__( 'Lazy Load SVG', 'inline-svg-elementor' ),
                 'type'         => Controls_Manager::SWITCHER,
-                'label_on'     => esc_html__( 'Yes', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
-                'label_off'    => esc_html__( 'No', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+                'label_on'     => esc_html__( 'Yes', 'inline-svg-elementor' ),
+                'label_off'    => esc_html__( 'No', 'inline-svg-elementor' ),
                 'return_value' => 'yes',
                 'default'      => 'no',
-                'description'  => esc_html__( 'Defer loading of the SVG until it is visible.', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+                'description'  => esc_html__( 'Defer loading of the SVG until it is visible.', 'inline-svg-elementor' ),
                 'condition'    => [
                     'enable_inline_svg' => 'yes',
                 ],
@@ -288,7 +288,7 @@ public function add_controls($element) {
         $element->add_control(
             'primary_color',
             [
-                'label'     => esc_html__( 'SVG Fill Color', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+                'label'     => esc_html__( 'SVG Fill Color', 'inline-svg-elementor' ),
                 'type'      => Controls_Manager::COLOR,
                 'default'   => '',
                 'selectors' => [
@@ -326,7 +326,7 @@ public function add_controls($element) {
     // Handle manual cache clearing via admin bar action
     public function manual_clear_cache() {
         if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'inline_svg_elementor_clear_cache' ) ) {
-            wp_die( esc_html__( 'You are not allowed to clear the cache.', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) );
+            wp_die( esc_html__( 'You are not allowed to clear the cache.', 'inline-svg-elementor' ) );
         }
 
         $this->clear_cache();
@@ -343,9 +343,9 @@ public function add_controls($element) {
 
         $args = array(
             'id'    => 'inline_svg_elementor_clear_cache',
-            'title' => esc_html__( 'Clear Inline SVG Cache', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ),
+            'title' => esc_html__( 'Clear Inline SVG Cache', 'inline-svg-elementor' ),
             'href'  => wp_nonce_url( admin_url( 'admin-post.php?action=inline_svg_elementor_clear_cache' ), 'inline_svg_elementor_clear_cache' ),
-            'meta'  => array( 'title' => esc_html__( 'Clear Inline SVG Cache', INLINE_SVG_ELEMENTOR_TEXT_DOMAIN ) ),
+            'meta'  => array( 'title' => esc_html__( 'Clear Inline SVG Cache', 'inline-svg-elementor' ) ),
         );
         $wp_admin_bar->add_node( $args );
     }
