@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define the text domain as a constant
 
 // Always define the text domain constant
-define( ''inline-svg-elementor'', 'inline-svg-elementor' );
+define( 'INLINE_SVG_ELEMENTOR_TEXT_DOMAIN', 'inline-svg-elementor' );
 
 
 
